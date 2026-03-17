@@ -1,0 +1,66 @@
+/* Page wrapper adjustments for CreateLawyer (overrides login centering) */
+.create-lawyer-page {
+  /* leave some space under the navbar and avoid vertical centering */
+  padding-top: 12px;
+}
+
+/* Place the back link aligned with the navbar logo */
+.back-wrapper {
+  padding-left: 32px; /* match .navbar padding */
+  margin-bottom: 16px;
+  max-width: 1200px;
+  margin: 12px auto 0 12px;
+}
+
+/* Back Link Styling (slightly stronger for visibility) */
+.back-link {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    transform 0.12s ease;
+}
+
+.back-link:hover,
+.back-link:focus {
+  text-decoration: underline;
+  color: #0b57b6;
+  transform: translateX(-4px);
+  outline: none;
+}
+
+/* Override the generic .login-page centering only on this page so the card sits below navbar */
+.create-lawyer-page .login-page {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: flex-start; /* push card toward top */
+  justify-content: center;
+  padding-top: 24px;
+  padding-bottom: 40px;
+}
+
+/* Ensure login-card is fully visible on small screens */
+.create-lawyer-page .login-card {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* Prevent horizontal overflow which could cut navbar buttons */
+.create-lawyer-page,
+.create-lawyer-page * {
+  box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+  .back-wrapper {
+    padding-left: 20px;
+  }
+  .create-lawyer-page .login-page {
+    padding-top: 12px;
+    padding-bottom: 24px;
+  }
+}

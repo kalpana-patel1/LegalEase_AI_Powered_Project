@@ -1,0 +1,40 @@
+.total-panel {
+  text-align: center;
+}
+
+.total-panel h3 {
+  font-size: 13px;
+  color: #0f172a;
+  margin-bottom: 12px;
+}
+
+.total-count {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+}
+
+.admin-table th {
+  text-align: left;
+  font-size: 13px;
+  color: #64748b;
+  padding-bottom: 10px;
+}
+
+.admin-table td {
+  padding: 14px 0;
+  border-top: 1px solid #e2e8f0;
+  font-size: 14px;
+}
+
+.activity-list {
+  margin-top: 14px;
+  padding-left: 18px;
+  color: #475569;
+  font-size: 14px;
+}

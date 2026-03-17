@@ -1,0 +1,25 @@
+.summary-page {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.summary-card {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.summary-actions {
+  display: flex;
+  gap: 12px;
+}

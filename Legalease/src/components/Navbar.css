@@ -1,0 +1,202 @@
+/* ================= NAVBAR BASE ================= */
+
+.navbar {
+  position: relative;
+  height: 64px;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  color: white;
+  z-index: 1000;
+}
+
+/* LEFT */
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+/* RIGHT */
+
+/* nav-link for home */
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.nav-link:hover {
+  color: #60a5fa;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* BUTTONS */
+.nav-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+/* Prevent buttons from wrapping or shrinking which can cause visual clipping */
+.nav-btn {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nav-btn.primary {
+  background: #2563eb;
+  color: white;
+}
+
+.nav-btn.primary:hover {
+  background: #1d4ed8;
+  border: 1px solid white;
+  transition: 0.9s ease;
+}
+
+.nav-btn.secondary {
+  background: transparent;
+  border: 1px solid #334155;
+  color: white;
+}
+
+.nav-btn.secondary:hover {
+  background: #1e293b;
+  border: 1px solid white;
+}
+
+/* ================= HAMBURGER ================= */
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+}
+
+.hamburger span {
+  width: 22px;
+  height: 2px;
+  background: white;
+  transition: 0.3s;
+}
+
+/* Animation */
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ================= MOBILE MENU PANEL ================= */
+
+/* improved mobile menu panel */
+.mobile-menu {
+  position: absolute;
+  /* top: 60px;
+  right: 40px; */
+  top: 64px;
+  right: 0px;
+  width: 220px;
+  max-width: calc(100% - 32px);
+  background: #0f172a;
+  border-left: 1px solid #1e293b;
+  padding: 12px;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: 2px;
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.45);
+  z-index: 1500;
+}
+
+/* show panel when .show present (unchanged) */
+.mobile-menu.show {
+  display: flex;
+}
+/* Remove default link styling */
+.mobile-link {
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.mobile-link:hover {
+  color: #3b82f6;
+}
+
+/* make mobile-menu full-width on very small screens */
+@media (max-width: 420px) {
+  .mobile-menu {
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 0;
+    padding: 16px;
+  }
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .navbar-right {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .navbar {
+    padding: 0 20px;
+  }
+  @media (max-width: 768px) {
+    .mobile-menu {
+      display: flex;
+    }
+  }
+}
+
+/* Mid-size breakpoint: collapse nav into hamburger earlier to avoid clipping on tablets/smaller laptops */
+@media (max-width: 1100px) {
+  .navbar-right {
+    display: none;
+  }
+  .hamburger {
+    display: flex;
+  }
+  .nav-btn {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  .navbar {
+    padding: 0 16px;
+  }
+}

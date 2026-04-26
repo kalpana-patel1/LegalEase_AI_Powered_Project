@@ -21,9 +21,9 @@ export default function Login() {
       );
 
       const { token, user } = response.data;
+      console.log("LOGIN USER:", user);
 
-      // ✅ STORE USER ID HERE
-      localStorage.setItem("userId", user._id);
+      localStorage.setItem("userId", user._id || user.id);
 
       // (optional but recommended)
       localStorage.setItem("token", token);
@@ -71,15 +71,6 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-
-        {/* Bar Council ID – ONLY FOR LAWYER */}
-        {/* {role === "Lawyer" && (
-          <div className="form-group">
-            <label>Bar Council ID</label>
-            <input type="text" placeholder="BCE-12345" />
-          </div>
-        )} */}
-
         {/* Sign In Button */}
         <button className="login-btn" onClick={handleLogin}>
           Sign Up

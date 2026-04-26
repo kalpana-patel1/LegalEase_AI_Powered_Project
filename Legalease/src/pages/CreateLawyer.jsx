@@ -46,7 +46,8 @@ export default function CreateLawyer() {
           tabIndex={0}
           onClick={() => navigate("/admin-dashboard")}
           onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") navigate("/admin-dashboard");
+            if (e.key === "Enter" || e.key === " ")
+              navigate("/admin-dashboard");
           }}
           aria-label="Back to Dashboard"
         >

@@ -1,10 +1,17 @@
 import "./Navbar.css";
 import { Link, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear(); //  clear everything
+  };
 
   //This automatically closes mobile menu when page changes.
   useEffect(() => {
@@ -25,6 +32,9 @@ export default function Navbar() {
 
         {/* DESKTOP RIGHT */}
         <div className="navbar-right">
+          {/* <Link to="/" className="nav-link">
+            Home
+          </Link> */}
           <Link to="/" className="nav-link">
             Home
           </Link>
@@ -40,7 +50,11 @@ export default function Navbar() {
             </Link>
           )}
 
-          <Link to="/login" className="nav-btn secondary">
+          <Link
+            to="/login"
+            onClick={handleLogout}
+            className="nav-btn secondary"
+          >
             Logout
           </Link>
         </div>
@@ -50,7 +64,6 @@ export default function Navbar() {
           className={`hamburger ${open ? "active" : ""}`}
           onClick={() => setOpen(!open)}
         >
-          <span></span>
           <span></span>
           <span></span>
           <span></span>
@@ -84,7 +97,10 @@ export default function Navbar() {
         <Link
           to="/login"
           className="mobile-link"
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            handleLogout();
+            setOpen(false);
+          }}
         >
           Logout
         </Link>

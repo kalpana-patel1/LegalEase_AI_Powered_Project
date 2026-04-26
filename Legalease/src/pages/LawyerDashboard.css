@@ -84,7 +84,33 @@
   font-weight: 600;
   font-size: 14px;
 }
+.category-card.active {
+  border: 2px solid #2563eb;
+  background: #e0f2fe;
+  cursor: pointer;
+}
+.category-card {
+  cursor: pointer;
+}
+.filter-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #ebf0f6;
+  background: #e2e5e8;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
 
+.filter-btn:hover {
+  background: #f4f8fc;
+}
+
+.filter-btn.active {
+  background: #292d38;
+  color: white;
+  border: none;
+}
 /* ============================= */
 /* RISK DISTRIBUTION – CLEAN BLOCK STYLE */
 
@@ -176,7 +202,35 @@
   color: white;
   transition: 0.2s ease;
 }
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 10px;
+  color: #d32f2f;
+}
 
+.delete-btn:hover {
+  transform: scale(1.2);
+}
+.delete-btn {
+  background-color: #fdecea;
+  color: #d32f2f;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #f8d7da;
+  transform: scale(1.05);
+}
 /* ============================= */
 /* PRIMARY CTA STYLE (UPLOAD BUTTON IN NAVBAR) */
 
@@ -193,20 +247,34 @@
   background: #1d4ed8 !important;
 }
 
-/* ============================= */
 /* DEADLINES */
 
+.icon-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+}
+
+.icon-text svg {
+  display: block;
+  font-size: 20px;
+}
 .deadline {
   padding: 10px 0;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .deadline.urgent {
-  color: #dc2626;
+  color: #f90909;
   font-weight: 600;
 }
+.deadline-title {
+  color: #d32f2f;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
 
-/* ============================= */
 /* RESPONSIVE DESIGN */
 
 @media (max-width: 1024px) {
@@ -238,4 +306,44 @@
   .dashboard-btn.secondary {
     flex-shrink: 0;
   }
+}
+/* icon css */
+.icon-warning {
+  height: 30px;
+  width: 30px;
+  color: #c10505;
+}
+
+.icon-category {
+  height: 30px;
+  width: 30px;
+  color: #f68a1f;
+}
+
+.icon-chart {
+  height: 30px;
+  width: 30px;
+  color: #2e7d32;
+}
+
+.icon-document {
+  height: 30px;
+  width: 30px;
+  color: #ab6fd0;
+}
+.attention-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.attention-icon {
+  font-size: 30px;
+  color: orangered;
+  flex-shrink: 0;
+}
+
+.attention-text {
+  display: inline-block;
+  font-size: 18px;
 }

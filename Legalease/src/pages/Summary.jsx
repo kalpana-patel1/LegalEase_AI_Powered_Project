@@ -2,79 +2,69 @@ import "./Summary.css";
 
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import jsPDF from "jspdf";
+import { Icons } from "../icons";
 
 export default function Summary() {
+  const WarningIcon = Icons.warning;
+  const AIIcon = Icons.ai;
+  const UsersIcon = Icons.users;
+  const SummaryIcon = Icons.summary;
+  const CalendarIcon = Icons.calendar;
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-
-  /* MOCK DATA (future: backend API) */
-  const summaries = {
-    doc1: {
-      title: "Employment Agreement",
-      type: "Contract",
-      uploaded: "10 Feb 2026",
-      risk: "Medium",
-      summary:
-        "This employment agreement follows a standard structure but contains clauses that may pose legal concerns depending on jurisdiction.",
-      clauses: [
-        {
-          name: "Non-Compete Clause",
-          risk: "Medium",
-          note: "Duration may be considered excessive in certain jurisdictions.",
-        },
-        {
-          name: "Termination Clause",
-          risk: "Medium",
-          note: "Notice period is not clearly defined.",
-        },
-      ],
-      deadlines: ["Contract Review — 15 Oct 2026"],
-      suggestion:
-        "Review the non-compete duration and clarify termination notice requirements.",
-    },
-    doc2: {
-      title: "Property Lease",
-      type: "Lease",
-      uploaded: "05 Feb 2026",
-      risk: "Low",
-      summary:
-        "This lease agreement follows standard residential leasing practices with minimal legal risk.",
-      clauses: [],
-      deadlines: [],
-      suggestion: "No immediate action required.",
-    },
-
-    doc3: {
-      title: "NDA with Tech Partner",
-      type: "NDA",
-      uploaded: "12 Feb 2026",
-      risk: "High",
-      summary:
-        "This NDA contains ambiguous liability provisions that may expose the company to legal disputes.",
-      clauses: [
-        {
-          name: "Liability Clause",
-          risk: "High",
-          note: "Liability cap is unclear and may not sufficiently protect your organization.",
-        },
-      ],
-      deadlines: ["NDA Renewal — 25 Oct 2026"],
-      suggestion:
-        "Clarify liability limitations and define dispute resolution jurisdiction clearly.",
-    },
-  };
-
-  const doc = summaries[id];
-
+  const [doc, setDoc] = useState(null);
   useEffect(() => {
-    setTimeout(() => setLoading(false), 1500);
-  }, []);
+    const fetchDoc = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/documents/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        const data = await res.json();
+        console.log("DOCUMENT DATA:", data);
+        setDoc(data);
+
+        setTimeout(() => setLoading(false), 1000);
+      } catch (error) {
+        console.error("Error fetching document:", error);
+      }
+    };
+
+    fetchDoc();
+  }, [id]);
+
+  const safeDoc = doc
+    ? {
+        ...doc,
+        clauses: doc.riskyClauses || [],
+        deadlines: doc.deadlines || [],
+        suggestion: doc.suggestion || "No suggestions available.",
+      }
+    : null;
+  const summaryText =
+    typeof safeDoc?.summary === "object"
+      ? safeDoc.summary?.summary
+      : safeDoc?.summary;
+  if (loading) {
+    return (
+      <div className="summary-page">
+        <div className="summary-loading">
+          <h3>Analyzing document…</h3>
+          <p>AI is processing your document</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!doc) {
     return (
       <div className="summary-page">
         <div className="summary-card">
           <h2>Document not found.</h2>
+
           <Link to="/lawyer-dashboard" className="dashboard-btn secondary">
             Back to Dashboard
           </Link>
@@ -83,88 +73,229 @@ export default function Summary() {
     );
   }
 
+  const handleDownload = () => {
+    if (!safeDoc) return;
+
+    const docPDF = new jsPDF();
+
+    let y = 15;
+
+    // HEADER
+    docPDF.setFontSize(18);
+    docPDF.setTextColor(40, 40, 40);
+    docPDF.text("LegalEase AI Report", 10, y);
+
+    y += 10;
+
+    // LINE
+    docPDF.setDrawColor(200);
+    docPDF.line(10, y, 200, y);
+    y += 10;
+
+    // TITLE
+    docPDF.setFontSize(16);
+    docPDF.setTextColor(0, 0, 0);
+    docPDF.text(safeDoc.title || "Legal Document", 10, y);
+    y += 10;
+
+    // RISK BADGE TEXT
+    docPDF.setFontSize(12);
+    docPDF.setTextColor(200, 0, 0);
+    docPDF.text(`Risk Level: ${safeDoc.risk}`, 10, y);
+    y += 10;
+
+    // RESET COLOR
+    docPDF.setTextColor(0, 0, 0);
+
+    // ===== PARTIES =====
+    docPDF.setFontSize(14);
+    docPDF.text("Parties Involved", 10, y);
+    y += 8;
+
+    docPDF.setFontSize(11);
+    docPDF.text(
+      `Petitioner: ${safeDoc.summary?.parties?.petitioner || "Not specified"}`,
+      10,
+      y,
+    );
+    y += 6;
+
+    docPDF.text(
+      `Respondent: ${safeDoc.summary?.parties?.respondent || "Not specified"}`,
+      10,
+      y,
+    );
+    y += 10;
+
+    // ===== SUMMARY =====
+    docPDF.setFontSize(14);
+    docPDF.text("Summary", 10, y);
+    y += 8;
+
+    docPDF.setFontSize(11);
+    const summaryLines = docPDF.splitTextToSize(summaryText || "", 180);
+    docPDF.text(summaryLines, 10, y);
+    y += summaryLines.length * 6 + 10;
+
+    // ===== RISKY CLAUSES =====
+    docPDF.setFontSize(14);
+    docPDF.text("Risky Clauses", 10, y);
+    y += 8;
+
+    docPDF.setFontSize(11);
+
+    if (safeDoc.clauses?.length > 0) {
+      safeDoc.clauses.forEach((c) => {
+        const lines = docPDF.splitTextToSize(`• ${c}`, 180);
+        docPDF.text(lines, 10, y);
+        y += lines.length * 6;
+      });
+    } else {
+      docPDF.text("No risky clauses detected.", 10, y);
+      y += 6;
+    }
+
+    y += 10;
+
+    // ===== DEADLINES =====
+    docPDF.setFontSize(14);
+    docPDF.text("Important Deadlines", 10, y);
+    y += 8;
+
+    docPDF.setFontSize(11);
+
+    if (safeDoc.deadlines?.length > 0) {
+      safeDoc.deadlines.forEach((d) => {
+        const lines = docPDF.splitTextToSize(`• ${d}`, 180);
+        docPDF.text(lines, 10, y);
+        y += lines.length * 6;
+      });
+    } else {
+      docPDF.text("No deadlines found.", 10, y);
+    }
+
+    // FOOTER
+    docPDF.setFontSize(10);
+    docPDF.setTextColor(150);
+    docPDF.text("Generated by LegalEase AI • Confidential Report", 10, 285);
+
+    // SAVE
+    docPDF.save(`${safeDoc.title || "Legal_Report"}.pdf`);
+  };
   return (
     <div className="summary-page">
-      {loading ? (
-        <div className="summary-loading">
-          <h3>Analyzing document…</h3>
-          <p>AI is reviewing clauses and assessing risks.</p>
+      <>
+        {/* HEADER */}
+        <div className="summary-header">
+          <div>
+            <h1>{safeDoc.title}</h1>
+            <p className="summary-meta">
+              {safeDoc.category} • Uploaded on
+              {new Date(doc.createdAt).toDateString()}
+            </p>
+          </div>
+          <span className={`badge ${safeDoc.risk?.toLowerCase()}`}>
+            {safeDoc.risk} Risk
+          </span>
         </div>
-      ) : (
-        <>
-          {/* HEADER */}
-          <div className="summary-header">
-            <div>
-              <h1>{doc.title}</h1>
-              <p className="summary-meta">
-                {doc.type} • Uploaded on {doc.uploaded}
-              </p>
-            </div>
-            <span className={`badge ${doc.risk.toLowerCase()}`}>
-              {doc.risk} Risk
-            </span>
+        {/*  LEGAL DOCUMENT WARNING */}
+        {safeDoc?.is_legal === false && (
+          <div
+            style={{
+              background: "#ffe5e5",
+              color: "#b30000",
+              padding: "10px",
+              borderRadius: "8px",
+              margin: "15px 0",
+              fontWeight: "bold",
+            }}
+          >
+            <WarningIcon className="icon-warning" /> This does not appear to be
+            a legal document
           </div>
-
-          {/* EXECUTIVE SUMMARY */}
+        )}
+        {/* EXECUTIVE SUMMARY */}
+        <div className="summary-card">
+          <h3 className="icon-text">
+            <AIIcon className="icon-ai" /> AI Executive Summary
+          </h3>
+          {/* PARTIES */}
           <div className="summary-card">
-            <h3>🧠 AI Executive Summary</h3>
-            <p>{doc.summary}</p>
+            <h3 className="icon-text">
+              <UsersIcon className="icon-users" /> Parties Involved
+            </h3>
+
+            <p>
+              <strong>Petitioner:</strong>{" "}
+              {safeDoc.summary?.parties?.petitioner || "Not specified"}
+            </p>
+
+            <p>
+              <strong>Respondent:</strong>{" "}
+              {safeDoc.summary?.parties?.respondent || "Not specified"}
+            </p>
           </div>
+          <div>
+            <h4 className="icon-text">
+              <SummaryIcon className="icon-summary" /> Summary
+            </h4>
 
-          {/* RISKY CLAUSES */}
-          <div className="summary-card">
-            <h3>⚠️ Risky Clauses</h3>
-
-            {doc.clauses.length === 0 ? (
-              <p className="empty-text">No risky clauses detected.</p>
-            ) : (
-              doc.clauses.map((clause, index) => (
-                <div key={index} className="clause-item">
-                  <div className="clause-header">
-                    <strong>{clause.name}</strong>
-                    <span className={`badge ${clause.risk.toLowerCase()}`}>
-                      {clause.risk}
-                    </span>
-                  </div>
-                  <p>{clause.note}</p>
-                </div>
-              ))
-            )}
+            <p style={{ whiteSpace: "pre-line" }}>
+              {summaryText || "No summary available"}
+            </p>
           </div>
+        </div>
 
-          {/* DEADLINES */}
-          <div className="summary-card">
-            <h3>📅 Important Deadlines</h3>
+        {/* RISKY CLAUSES */}
+        <div className="summary-card">
+          <h3 className="icon-text">
+            <WarningIcon className="icon-warning" /> Risky Clauses
+          </h3>
 
-            {doc.deadlines.length === 0 ? (
-              <p className="empty-text">
-                AI did not detect any actionable deadlines.
-              </p>
-            ) : (
-              doc.deadlines.map((d, i) => (
-                <div key={i} className="deadline-item">
-                  {d}
-                </div>
-              ))
-            )}
-          </div>
+          {safeDoc?.clauses?.length === 0 ? (
+            <p className="empty-text">No risky clauses detected.</p>
+          ) : (
+            safeDoc?.clauses?.map((clause, index) => (
+              <div key={index} className="clause-item">
+                <p className="icon-text">
+                  <WarningIcon className=" small" /> {clause}
+                </p>
+              </div>
+            ))
+          )}
+        </div>
 
-          {/* RECOMMENDATION */}
-          <div className="summary-card">
-            <h3>✅ AI Recommendation</h3>
-            <p>{doc.suggestion}</p>
-          </div>
+        {/* DEADLINES */}
+        <div className="summary-card">
+          <h3 className="icon-text">
+            <CalendarIcon className="icon-calendar" />
+            Important Deadlines
+          </h3>
 
-          {/* ACTIONS */}
-          <div className="summary-actions">
-            <button className="dashboard-btn">Download AI Summary (PDF)</button>
+          {safeDoc?.deadlines?.length === 0 ? (
+            <p className="empty-text">
+              AI did not detect any actionable deadlines.
+            </p>
+          ) : (
+            safeDoc?.deadlines?.map((d, i) => (
+              <div key={i} className="deadline-item">
+                {d}
+              </div>
+            ))
+          )}
+        </div>
 
-            <Link to="/lawyer-dashboard" className="dashboard-btn secondary">
-              Back to Dashboard
-            </Link>
-          </div>
-        </>
-      )}
+        {/* ACTIONS */}
+        <div className="summary-actions">
+          <button className="dashboard-btn" onClick={handleDownload}>
+            Download AI Summary
+          </button>
+
+          <Link to="/lawyer-dashboard" className="dashboard-btn secondary">
+            Back to Dashboard
+          </Link>
+        </div>
+      </>
     </div>
   );
 }

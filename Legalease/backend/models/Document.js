@@ -15,17 +15,60 @@ const documentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    // Optional risk level and review status to support dashboard stats
-    riskLevel: {
+    // ADD THIS BLOCK
+    category: {
       type: String,
-      enum: ["low", "medium", "high"],
-      default: "low",
+      enum: [
+        "NDA",
+        "Agreement",
+        "Contract",
+        "Lease",
+        "Affidavit",
+        "Property",
+        "Tender",
+        "Court",
+        "Legal Document",
+        "Other",
+      ],
+      default: "Other",
     },
+    risk: {
+      type: String,
+      enum: ["Low", "Medium", "High"],
+      default: "Low",
+    },
+
+    //  FIXED SUMMARY STRUCTURE
+    summary: {
+      caseTitle: String,
+      summary: String, //  IMPORTANT (this was missing)
+
+      parties: {
+        petitioner: String,
+        respondent: String,
+      },
+    },
+
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
       default: "pending",
     },
+
+    deadlines: [String],
+    displayDeadlines: [
+      {
+        title: String,
+        description: String,
+        date: String,
+      },
+    ],
+    notified: {
+      type: Boolean,
+      default: false,
+    },
+    riskyClauses: [String],
+    suggestion: String,
   },
   { timestamps: true },
 );

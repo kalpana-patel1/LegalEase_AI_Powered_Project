@@ -1,7 +1,7 @@
 import "./AdminDashboard.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import { Icons } from "../icons";
 export default function AdminDashboard() {
   const [lawyers, setLawyers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +41,7 @@ export default function AdminDashboard() {
     highRisk: 0,
     pending: 0,
   };
-
+  const UserIcon = Icons.users;
   const handleDelete = async (lawyer) => {
     const confirmed = window.confirm(
       `Are you sure you want to permanently delete ${lawyer.name}? This will remove their account and all associated documents.`,
@@ -88,21 +88,13 @@ export default function AdminDashboard() {
           <h3>Total Documents</h3>
           <p className="total-count">{displayStats.totalDocuments}</p>
         </div>
-
-        <div className="panel total-panel">
-          <h3>High Risk Docs</h3>
-          <p className="total-count">{displayStats.highRisk}</p>
-        </div>
-
-        <div className="panel total-panel">
-          <h3>Pending Reviews</h3>
-          <p className="total-count">{displayStats.pending}</p>
-        </div>
       </div>
 
       {/* LAWYER LIST */}
       <div className="panel">
-        <h3>👨‍⚖️ Registered Lawyers</h3>
+        <h3 className="icon-text">
+          <UserIcon className="icon-users" /> Registered Lawyers
+        </h3>
 
         {loading && <p>Loading lawyers...</p>}
         {error && <p className="error-text">{error}</p>}
@@ -128,7 +120,7 @@ export default function AdminDashboard() {
                     <button
                       className="btn btn-secondary"
                       style={{ marginLeft: 12 }}
-                      onClick={() => handleDelete(lawyer._id)}
+                      onClick={() => handleDelete(lawyer)}
                     >
                       Delete
                     </button>
@@ -138,16 +130,6 @@ export default function AdminDashboard() {
             </tbody>
           </table>
         )}
-      </div>
-
-      {/* ACTIVITY */}
-      <div className="panel">
-        <h3>📊 Recent Activity</h3>
-        <ul className="activity-list">
-          <li>Amit Sharma uploaded "Employment Agreement"</li>
-          <li>High risk detected in NDA document</li>
-          <li>Neha Verma uploaded Lease Agreement</li>
-        </ul>
       </div>
     </div>
   );

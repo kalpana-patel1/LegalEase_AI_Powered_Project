@@ -23,3 +23,41 @@
   display: flex;
   gap: 12px;
 }
+.icon-ai {
+  color: #6a1b9a;
+  height: 28px;
+}
+
+.icon-users {
+  color: #1976d2;
+}
+
+.icon-summary {
+  color: #0288d1;
+}
+
+.icon-calendar {
+  color: #2e7d32;
+}
+
+.icon-warning {
+  color: #d3662f;
+}
+
+.icon-warning.small {
+  font-size: 16px;
+}
+.risk-list {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.risk-list li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+  color: #555;
+}
+
+.risk-list li::marker {
+  color: #d32f2f;
+}

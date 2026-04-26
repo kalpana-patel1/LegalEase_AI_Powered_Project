@@ -36,10 +36,11 @@ router.delete("/lawyers/:id", protect, async (req, res) => {
 
     // Remove user and optionally their documents
     await Document.deleteMany({ uploadedBy: user._id });
-    await user.remove();
+    await user.deleteOne();
 
     res.json({ message: "Lawyer deleted" });
   } catch (error) {
+    console.error("DELETE ERROR:", error.message);
     res.status(500).json({ message: "Server error" });
   }
 });
